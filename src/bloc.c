@@ -1036,7 +1036,7 @@ static int ide_initialize (bloc_device_t *bd, int device)
         atapi_pad_req(&atapi_buffer, len);
         ide_port_write(bd, 0x07, 0xA0);
         status = ide_port_read(bd, 0x07);
-        if (status != 0x08) {
+        if ((status & 0x08) != 0x08) { // DRQ_STAT
             ERROR("ATAPI TEST_UNIT_READY : status %0x != 0x08\n", status);
             return -1;
         }
@@ -1044,7 +1044,7 @@ static int ide_initialize (bloc_device_t *bd, int device)
             ide_data_writel(bd, ldswap32(&atapi_buffer[i]));
         }
         status = ide_port_read(bd, 0x07);
-        if (status != 0x40) {
+        if ((status & 0x40) != 0x40) { // READY_STAT
             ERROR("ATAPI TEST_UNIT_READY : status %0x != 0x40\n", status);
             return -1;
         }
@@ -1054,7 +1054,7 @@ static int ide_initialize (bloc_device_t *bd, int device)
         atapi_pad_req(&atapi_buffer, len);
         atapi_make_req(bd, atapi_buffer, 36);
         status = ide_port_read(bd, 0x07);
-        if (status != 0x48) {
+        if ((status & 0x48) != 0x48) { // READY_STAT | DRQ_STAT
             ERROR("ATAPI INQUIRY : status %0x != 0x48\n", status);
             return -1;
         }
@@ -1070,7 +1070,7 @@ static int ide_initialize (bloc_device_t *bd, int device)
         atapi_pad_req(&atapi_buffer, len);
         atapi_make_req(bd, atapi_buffer, 8);
         status = ide_port_read(bd, 0x07);
-        if (status != 0x48) {
+        if ((status & 0x48) != 0x48) { // READY_STAT | DRQ_STAT
             ERROR("ATAPI READ_CAPACITY : status %0x != 0x48\n", status);
             return -1;
         }
@@ -1084,7 +1084,7 @@ static int ide_initialize (bloc_device_t *bd, int device)
         bd->read_sector = &atapi_read_sector;
         DPRINTF("ATAPI: size=%d ssize=%d\n", size, bd->seclen);
     } else {
-        if (status != 0x41) {
+        if ((status & 0x41) != 0x41) {
             ERROR("WIN_DEVICE_RESET : status %0x != 0x41 (is_cdrom: %d)\n",
                   status, is_cdrom);
             return -1;
@@ -1092,7 +1092,7 @@ static int ide_initialize (bloc_device_t *bd, int device)
         /* WIN_READ_NATIVE_MAX */
         ide_port_write(bd, 0x07, 0xF8);
         status = ide_port_read(bd, 0x07);
-        if (status != 0x40) {
+        if ((status & 0x40) != 0x40) { // READY_STAT
             ERROR("WIN_READ_NATIVE_MAX : status %0x != 0x40\n", status);
             return -1;
         }
@@ -1145,7 +1145,7 @@ static int atapi_read_sector (bloc_device_t *bd, void *buffer, int secnum)
     atapi_pad_req(&atapi_buffer, len);
     atapi_make_req(bd, atapi_buffer, bd->seclen);
     status = ide_port_read(bd, 0x07);
-    if (status != 0x48) {
+    if ((status & 0x48) != 0x48) { // READY_STAT | DRQ_STAT
         ERROR("ATAPI READ12 : status %0x != 0x48\n", status);
         return -1;
     }
@@ -1158,7 +1158,7 @@ static int atapi_read_sector (bloc_device_t *bd, void *buffer, int secnum)
         *p++ = value >> 24;
     }
     status = ide_port_read(bd, 0x07);
-    if (status != 0x40) {
+    if ((status & 0x40) != 0x40) { // READY_STAT
         ERROR("ATAPI READ12 done : status %0x != 0x48\n", status);
         return -1;
     }
@@ -1192,7 +1192,7 @@ static int ide_read_sector (bloc_device_t *bd, void *buffer, int secnum)
     ide_port_write(bd, 0x07, 0x20);
     status = ide_port_read(bd, 0x07);
     //    DPRINTF("ide_read_sector: try %d\n", secnum);
-    if (status != 0x58) {
+    if ((status & 0x58) != 0x58) {
         ERROR("ide_read_sector: %d status %0x != 0x58\n", secnum, status);
         return -1;
     }
@@ -1206,7 +1206,7 @@ static int ide_read_sector (bloc_device_t *bd, void *buffer, int secnum)
         *p++ = value >> 24;
     }
     status = ide_port_read(bd, 0x07);
-    if (status != 0x50) {
+    if ((status & 0x50) != 0x50) {
         ERROR("ide_read_sector 6: status %0x != 0x50\n", status);
         return -1;
     }
