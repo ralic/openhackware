@@ -21,7 +21,7 @@
 
 #DEBUG=1
 
-CROSS_COMPILE?=powerpc-linux-
+CROSS_COMPILE?=powerpc-unknown-linux-gnu-
 CC:= $(CROSS_COMPILE)gcc
 LD:= $(CROSS_COMPILE)ld
 OBJCOPY:= $(CROSS_COMPILE)objcopy
@@ -44,7 +44,7 @@ DISTDIR:= .
 SRCDIR:= src
 
 CC_BASE:= $(shell $(CC) -print-search-dirs | grep install | sed -e 's/.*\ //')
-CFLAGS= -Wall -W -Werror -O2 -g -fno-builtin -fno-common -nostdinc -mregnames
+CFLAGS= -Wall -W -O2 -g -fno-strict-aliasing -fno-builtin -fno-common -nostdinc -mregnames
 CFLAGS+= -DBUILD_DATE=$(BUILD_DATE) -DBUILD_TIME=$(BUILD_TIME)
 CFLAGS+= -I$(SRCDIR)/ -I$(SRCDIR)/libc/include -I$(CC_BASE)/include
 CFLAGS+= -I$(SRCDIR)/dev -I$(SRCDIR)/dev/block -I$(SRCDIR)/dev/char

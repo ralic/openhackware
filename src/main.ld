@@ -21,8 +21,8 @@ OUTPUT_ARCH(powerpc)
 
 MEMORY
 {
-        start (rwx) : ORIGIN = 0x05800000, LENGTH = 0x00000400
-        bios (rwx)  : ORIGIN = 0x05800400, LENGTH = 0x0007FC00
+        start (rwx) : ORIGIN = 0x05800000, LENGTH = 0x00006000
+        bios (rwx)  : ORIGIN = 0x05806000, LENGTH = 0x0007FC00
         ram  (rw)   : ORIGIN = 0x06000000, LENGTH = 0x00200000
 }
 
