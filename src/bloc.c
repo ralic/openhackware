@@ -292,10 +292,10 @@ part_t *bd_probe (int boot_device)
         else
             force_raw = 0;
         tmp = part_probe(bd, force_raw);
-        if (boot_device == bd->device) {
+        //if (boot_device == bd->device) {
             boot_part = tmp;
             bd_set_boot_device(bd);
-        }
+        //}
     }
 
     return boot_part;
